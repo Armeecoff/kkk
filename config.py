@@ -1,4 +1,6 @@
-BOT_TOKEN = "8047299603:AAGKC9djcuRdyfQ1o99Q8zmznbGI1PQd5EQ"
-ADMIN_ID = 5200868328
-PREMIUM_PRICE_CLICKS = 50000
-WEBAPP_URL = "https://kkk-production-a684.up.railway.app/"
+import os
+
+BOT_TOKEN = os.getenv("BOT_TOKEN", "")
+ADMIN_ID = int(os.getenv("ADMIN_ID", "0"))
+PREMIUM_PRICE_CLICKS = int(os.getenv("PREMIUM_PRICE_CLICKS", "50000"))
+WEBAPP_URL = os.getenv("WEBAPP_URL", "")
