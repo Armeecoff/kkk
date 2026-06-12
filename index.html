@@ -782,33 +782,60 @@ async function init() {
   applyTheme(state.theme, state.accent_color);
   renderLevels();
 
-  if (tg) {
-    const u = tg.initDataUnsafe?.user;
-    if (u) {
-      document.getElementById('profile-name').textContent = u.first_name + (u.last_name ? ' '+u.last_name : '');
-      document.getElementById('profile-handle').textContent = '@'+(u.username || u.id);
-    }
-    try {
-      await sendAction({ action:'get_state' });
-    } catch(e) { console.warn('offline mode'); }
-
-    // Check admin status
-    try {
-      const cfgResp = await fetch('/api/config');
-      if (cfgResp.ok) {
-        const cfg = await cfgResp.json();
-        if (u && cfg.admin_id && Number(u.id) === Number(cfg.admin_id)) {
-          state.is_admin = true;
-          document.getElementById('nav-admin').style.display = 'flex';
-        }
-      }
-    } catch(e) {}
+  // Show profile info immediately from Telegram (best-effort fallback)
+  const u = tg?.initDataUnsafe?.user;
+  if (u) {
+    const name = u.first_name + (u.last_name ? ' ' + u.last_name : '');
+    document.getElementById('profile-name').textContent = name || 'Игрок';
+    document.getElementById('profile-handle').textContent = u.username ? '@' + u.username : (u.id ? '#' + u.id : '');
   }
+
+  // Load full state from server (REST API — does NOT close the app)
+  try {
+    const d = await sendAction({ action: 'get_state' });
+    if (d && d.ok) applyStateFromServer(d);
+  } catch(e) { console.warn('offline mode', e); }
 
   updateUI();
   buildShop();
   buildBoostsDisplay();
   startAutoClickers();
+}
+
+function applyStateFromServer(d) {
+  const usr = d.user || {};
+
+  // Sync game state from server (server is source of truth)
+  if (usr.balance !== undefined)      state.balance      = usr.balance;
+  if (usr.total_clicks !== undefined) state.total_clicks = usr.total_clicks;
+  if (usr.level !== undefined)        state.level        = usr.level;
+  if (usr.skin !== undefined)         state.skin         = usr.skin;
+  if (usr.is_premium !== undefined)   state.is_premium   = usr.is_premium;
+  if (usr.premium_until !== undefined) state.premium_until = usr.premium_until;
+  if (usr.theme)        { state.theme        = usr.theme;        }
+  if (usr.accent_color) { state.accent_color = usr.accent_color; }
+  applyTheme(state.theme, state.accent_color);
+  saveLocal();
+
+  // Profile name & username from server (authoritative)
+  if (d.first_name) {
+    document.getElementById('profile-name').textContent = d.first_name;
+  }
+  if (d.username !== undefined) {
+    document.getElementById('profile-handle').textContent = d.username ? '@' + d.username : '';
+  }
+
+  // Admin tab
+  if (usr.is_admin) {
+    state.is_admin = true;
+    document.getElementById('nav-admin').style.display = 'flex';
+  }
+
+  // Shop items from server
+  if (Array.isArray(d.items)) shopItems = d.items;
+
+  // Level thresholds
+  if (Array.isArray(d.levels)) { levelThresholds = d.levels; renderLevels(); }
 }
 
 function loadLocal() {
@@ -840,12 +867,32 @@ function saveLocal() {
 // ════════════════════════════════════════════════════
 //  TELEGRAM BRIDGE
 // ════════════════════════════════════════════════════
-function sendAction(data) {
-  return new Promise((resolve, reject) => {
-    if (!tg) return reject('no tg');
-    tg.sendData(JSON.stringify(data));
-    resolve({ok:true});
-  });
+async function sendAction(data) {
+  const endpointMap = {
+    'get_state':          '/api/state',
+    'click':              '/api/click',
+    'buy':                '/api/buy',
+    'set_skin':           '/api/set_skin',
+    'buy_premium':        '/api/buy_premium',
+    'set_theme':          '/api/set_theme',
+    'set_premium_skin_url': '/api/set_premium_skin_url',
+  };
+  const url = endpointMap[data.action];
+  if (!url) return { ok: false, error: 'unknown action' };
+  try {
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Init-Data': tg?.initData || '',
+      },
+      body: JSON.stringify(data),
+    });
+    return await resp.json();
+  } catch(e) {
+    console.warn('sendAction error:', e);
+    return { ok: false, error: String(e) };
+  }
 }
 
 // ════════════════════════════════════════════════════
