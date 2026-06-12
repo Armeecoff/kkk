@@ -763,6 +763,7 @@ let state = {
   balance: 0, total_clicks: 0, level: 1,
   is_premium: false, premium_until: null, skin: 'basic',
   theme: 'dark', accent_color: 'purple', is_admin: false,
+  first_name: '', username: '',
 };
 let shopItems = [];
 let levelThresholds = [0,100,250,450,700,1000,1400,1900,2500,3200,4000];
@@ -785,9 +786,10 @@ async function init() {
   // Show profile info immediately from Telegram (best-effort fallback)
   const u = tg?.initDataUnsafe?.user;
   if (u) {
-    const name = u.first_name + (u.last_name ? ' ' + u.last_name : '');
-    document.getElementById('profile-name').textContent = name || 'Игрок';
-    document.getElementById('profile-handle').textContent = u.username ? '@' + u.username : (u.id ? '#' + u.id : '');
+    const name = (u.first_name + (u.last_name ? ' ' + u.last_name : '')).trim();
+    if (name) state.first_name = name;
+    if (u.username) state.username = u.username;
+    else if (u.id) state.username = '#' + u.id;
   }
 
   // Load full state from server (REST API — does NOT close the app)
@@ -815,21 +817,15 @@ function applyStateFromServer(d) {
   if (usr.theme)        { state.theme        = usr.theme;        }
   if (usr.accent_color) { state.accent_color = usr.accent_color; }
   applyTheme(state.theme, state.accent_color);
-  saveLocal();
 
   // Profile name & username from server (authoritative)
-  if (d.first_name) {
-    document.getElementById('profile-name').textContent = d.first_name;
-  }
-  if (d.username !== undefined) {
-    document.getElementById('profile-handle').textContent = d.username ? '@' + d.username : '';
-  }
+  if (d.first_name) state.first_name = d.first_name;
+  if (d.username !== undefined) state.username = d.username || '';
 
-  // Admin tab
-  if (usr.is_admin) {
-    state.is_admin = true;
-    document.getElementById('nav-admin').style.display = 'flex';
-  }
+  // Admin flag
+  if (usr.is_admin !== undefined) state.is_admin = !!usr.is_admin;
+
+  saveLocal();
 
   // Shop items from server
   if (Array.isArray(d.items)) shopItems = d.items;
@@ -837,6 +833,7 @@ function applyStateFromServer(d) {
   // Level thresholds
   if (Array.isArray(d.levels)) { levelThresholds = d.levels; renderLevels(); }
 }
+
 
 function loadLocal() {
   try {
@@ -849,6 +846,8 @@ function loadLocal() {
     if (saved.skin) state.skin = saved.skin;
     if (saved.is_premium !== undefined) state.is_premium = saved.is_premium;
     if (saved.premium_until) state.premium_until = saved.premium_until;
+    if (saved.first_name) state.first_name = saved.first_name;
+    if (saved.username !== undefined) state.username = saved.username;
     if (saved.activeBoosts) {
       activeBoosts = saved.activeBoosts.filter(b => b.endsAt > Date.now());
     }
@@ -860,7 +859,9 @@ function saveLocal() {
     balance: state.balance, total_clicks: state.total_clicks,
     level: state.level, theme: state.theme, accent_color: state.accent_color,
     skin: state.skin, is_premium: state.is_premium,
-    premium_until: state.premium_until, activeBoosts,
+    premium_until: state.premium_until,
+    first_name: state.first_name, username: state.username,
+    activeBoosts,
   }));
 }
 
@@ -997,6 +998,12 @@ function updateUI() {
   document.getElementById('prog-nums').textContent = fmt(state.total_clicks)+' / '+fmt(next);
   document.getElementById('prog-label').textContent = 'До уровня '+(state.level+1);
 
+  // profile identity
+  document.getElementById('profile-name').textContent = state.first_name || 'Игрок';
+  const handleRaw = state.username || '';
+  document.getElementById('profile-handle').textContent =
+    handleRaw ? (handleRaw.startsWith('#') ? handleRaw : '@' + handleRaw) : '';
+
   // stats
   document.getElementById('stat-balance').textContent = fmt(state.balance);
   document.getElementById('stat-total').textContent = fmt(state.total_clicks);
@@ -1004,12 +1011,15 @@ function updateUI() {
   const premUntil = state.premium_until ? new Date(state.premium_until).toLocaleDateString('ru') : '—';
   document.getElementById('stat-premium').textContent = premUntil;
 
-  // premium
+  // premium badge
+  document.getElementById('profile-premium').style.display = state.is_premium ? 'block' : 'none';
   if (state.is_premium) {
-    document.getElementById('profile-premium').style.display = 'block';
     document.getElementById('premium-url-form').style.display = 'flex';
     document.getElementById('premium-btn').textContent = '✅ Продлить — 50 000 кликов';
   }
+
+  // admin nav visibility
+  document.getElementById('nav-admin').style.display = state.is_admin ? 'flex' : 'none';
 
   // skin
   const tapBtn = document.getElementById('tap-btn');
@@ -1969,6 +1979,7 @@ function switchTab(tab) {
   document.getElementById('nav-'+tab).classList.add('active');
   activeTab = tab;
   if (tab === 'shop') buildShop();
+  if (tab === 'profile') updateUI();
 }
 
 // ════════════════════════════════════════════════════
