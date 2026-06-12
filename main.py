@@ -201,7 +201,7 @@ def admin_vpn_kb():
     buttons = [
         [
             InlineKeyboardButton(text="🔄 Парсить VPN", callback_data="admin_parse_vpn"),
-            InlineKeyboardButton(text="📋 Список конфигов", callback_data="admin_list_vpn"),
+            InlineKeyboardButton(text="📋 Список конфигов", callback_data="admin_list_vpn:0"),
         ],
         [
             InlineKeyboardButton(text="➕ VPN-товар", callback_data="admin_add_vpn_item"),
@@ -598,22 +598,47 @@ async def admin_parse_vpn(call: CallbackQuery):
         await call.message.edit_text(f"❌ Ошибка: {e}", reply_markup=admin_vpn_kb())
 
 
-@router.callback_query(F.data == "admin_list_vpn")
+@router.callback_query(F.data == "noop")
+async def noop_cb(call: CallbackQuery):
+    await call.answer()
+
+
+@router.callback_query(F.data.startswith("admin_list_vpn"))
 async def admin_list_vpn(call: CallbackQuery):
     if call.from_user.id != ADMIN_ID:
         return
+    page = 0
+    if ":" in call.data:
+        try:
+            page = int(call.data.split(":")[1])
+        except Exception:
+            page = 0
+    per_page = 8
+    offset = page * per_page
     conn = get_db()
-    configs = conn.execute("SELECT id, config_text, is_sold FROM vpn_configs LIMIT 20").fetchall()
+    total = conn.execute("SELECT COUNT(*) FROM vpn_configs").fetchone()[0]
+    configs = conn.execute(
+        "SELECT id, config_text, is_sold FROM vpn_configs ORDER BY id LIMIT ? OFFSET ?",
+        (per_page, offset)
+    ).fetchall()
     conn.close()
-    if not configs:
+    total_pages = max(1, (total + per_page - 1) // per_page)
+    if not configs and page == 0:
         text = "📭 Конфигов нет. Нажмите «Парсить VPN»."
     else:
-        text = "📋 <b>VPN Конфиги (первые 20):</b>\n\n"
+        text = f"📋 <b>VPN Конфиги</b> (стр. {page+1}/{total_pages}, всего {total}):\n\n"
         for c in configs:
             status = "✅" if not c["is_sold"] else "❌ продан"
-            short = c["config_text"][:40] + "..." if len(c["config_text"]) > 40 else c["config_text"]
-            text += f"<b>#{c['id']}</b> {status}\n<code>{short}</code>\n\n"
-    await call.message.edit_text(text, parse_mode="HTML", reply_markup=back_kb("admin_vpn"))
+            cfg_text = c["config_text"][:150] + ("…" if len(c["config_text"]) > 150 else "")
+            text += f"<b>#{c['id']}</b> {status}\n<code>{cfg_text}</code>\n\n"
+    nav = []
+    if page > 0:
+        nav.append(InlineKeyboardButton(text="◀️", callback_data=f"admin_list_vpn:{page-1}"))
+    nav.append(InlineKeyboardButton(text=f"{page+1}/{total_pages}", callback_data="noop"))
+    if page < total_pages - 1:
+        nav.append(InlineKeyboardButton(text="▶️", callback_data=f"admin_list_vpn:{page+1}"))
+    kb = InlineKeyboardMarkup(inline_keyboard=[nav, [InlineKeyboardButton(text="◀ Назад", callback_data="admin_vpn")]])
+    await call.message.edit_text(text, parse_mode="HTML", reply_markup=kb)
 
 
 @router.callback_query(F.data == "admin_add_vpn_item")
@@ -779,6 +804,7 @@ async def handle_webapp_data(message: Message):
                 "skin": user_row["skin"],
                 "theme": user_row["theme"],
                 "accent_color": user_row["accent_color"],
+                "is_admin": user_id == ADMIN_ID,
             },
             "items": items_list,
             "levels": LEVEL_THRESHOLDS,
