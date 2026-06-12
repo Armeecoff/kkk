@@ -27,7 +27,7 @@
     --glass: rgba(255,255,255,0.45); --glass-border: rgba(100,100,180,0.22);
   }
   body.theme-starry   { --bg:#030310; --bg2:#060620; }
-  body.theme-blackhole{ --bg:#ffffff; --bg2:#eeeeee; --text:#111; --text-sub:rgba(0,0,0,0.5); --card:rgba(0,0,0,0.06); --card-border:rgba(0,0,0,0.12); --glass:rgba(0,0,0,0.05); --glass-border:rgba(0,0,0,0.15); }
+  body.theme-blackhole{ --bg:#060008; --bg2:#0d000d; --text:#f0e0ff; --text-sub:rgba(220,180,255,0.55); --card:rgba(100,0,150,0.1); --card-border:rgba(200,80,255,0.22); --glass:rgba(100,0,150,0.12); --glass-border:rgba(200,80,255,0.28); }
   body.theme-ocean    { --bg:#040e1a; --bg2:#061424; --card:rgba(0,120,200,0.1); --card-border:rgba(0,180,255,0.18); --text:#e0f4ff; --text-sub:rgba(180,220,255,0.55); --glass:rgba(0,120,200,0.12); --glass-border:rgba(0,180,255,0.22); }
   body.theme-fire     { --bg:#0d0500; --bg2:#1a0800; --card:rgba(200,80,0,0.12); --card-border:rgba(255,120,0,0.2); --text:#fff5e0; --text-sub:rgba(255,200,100,0.55); --glass:rgba(200,80,0,0.14); --glass-border:rgba(255,120,0,0.22); }
   body.theme-sakura   { --bg:#1a0d14; --bg2:#261020; --card:rgba(240,80,140,0.08); --card-border:rgba(255,150,180,0.18); --text:#fff0f5; --text-sub:rgba(255,180,210,0.55); --glass:rgba(240,80,140,0.1); --glass-border:rgba(255,150,180,0.22); }
@@ -36,6 +36,9 @@
   body.theme-neon     { --bg:#020208; --bg2:#050510; --card:rgba(0,200,255,0.06); --card-border:rgba(0,255,255,0.15); --text:#e0ffff; --text-sub:rgba(0,255,255,0.5); --glass:rgba(0,200,255,0.08); --glass-border:rgba(0,255,255,0.18); }
   body.theme-winter   { --bg:#050c18; --bg2:#0a1828; --card:rgba(150,200,255,0.08); --card-border:rgba(180,220,255,0.18); --text:#e8f4ff; --text-sub:rgba(180,210,255,0.55); --glass:rgba(150,200,255,0.09); --glass-border:rgba(180,220,255,0.22); }
   body.theme-sunset   { --bg:#0f050a; --bg2:#1a080e; --card:rgba(220,80,60,0.08); --card-border:rgba(255,120,60,0.18); --text:#fff0e8; --text-sub:rgba(255,190,150,0.55); --glass:rgba(220,80,60,0.1); --glass-border:rgba(255,120,60,0.22); }
+  body.theme-aurora   { --bg:#011408; --bg2:#021c0c; --card:rgba(0,220,150,0.08); --card-border:rgba(0,255,180,0.18); --text:#e0fff4; --text-sub:rgba(150,255,220,0.55); --glass:rgba(0,220,150,0.1); --glass-border:rgba(0,255,180,0.22); }
+  body.theme-cyber    { --bg:#080010; --bg2:#0f0018; --card:rgba(255,200,0,0.07); --card-border:rgba(255,220,0,0.18); --text:#fff9e0; --text-sub:rgba(255,220,100,0.55); --glass:rgba(255,200,0,0.09); --glass-border:rgba(255,220,0,0.2); }
+  body.theme-deepspace{ --bg:#000002; --bg2:#00000a; --card:rgba(60,60,200,0.08); --card-border:rgba(80,80,255,0.15); --text:#e8e8ff; --text-sub:rgba(180,180,255,0.5); --glass:rgba(60,60,200,0.09); --glass-border:rgba(80,80,255,0.18); }
 
   /* ── Accent palettes ────────────────── */
   body.accent-red    { --accent:#ef4444; --accent-glow:rgba(239,68,68,0.4); }
@@ -45,6 +48,9 @@
   body.accent-yellow { --accent:#eab308; --accent-glow:rgba(234,179,8,0.4); }
   body.accent-pink   { --accent:#ec4899; --accent-glow:rgba(236,72,153,0.4); }
   body.accent-teal   { --accent:#14b8a6; --accent-glow:rgba(20,184,166,0.4); }
+  body.accent-indigo { --accent:#6366f1; --accent-glow:rgba(99,102,241,0.4); }
+  body.accent-mint   { --accent:#10d9a4; --accent-glow:rgba(16,217,164,0.4); }
+  body.accent-gold   { --accent:#f59e0b; --accent-glow:rgba(245,158,11,0.4); }
 
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
@@ -86,9 +92,33 @@
   /* ── Black hole ─────────────────────── */
   #blackhole-wrap { position:fixed; inset:0; z-index:0; pointer-events:none; display:none; align-items:center; justify-content:center; }
   body.theme-blackhole #blackhole-wrap { display:flex; }
-  .blackhole-ring { position:absolute; border-radius:50%; border:3px solid rgba(0,0,0,0.08); animation:bh-spin var(--s,8s) linear infinite; }
-  @keyframes bh-spin { to { transform:rotate(360deg); } }
-  .blackhole-core { width:140px; height:140px; border-radius:50%; background:radial-gradient(circle,#000 40%,transparent 70%); box-shadow:0 0 60px 20px rgba(0,0,0,0.3); }
+  @keyframes bh-spin  { to { transform:rotate(360deg); } }
+  @keyframes bh-rspin { to { transform:rotate(-360deg); } }
+  @keyframes bh-breathe { 0%{transform:scale(1);opacity:.6} 100%{transform:scale(1.22);opacity:1} }
+  @keyframes bh-disk    { to { transform:rotate(360deg); } }
+  .bh-glow { position:absolute; width:520px; height:520px; border-radius:50%; background:radial-gradient(circle,rgba(160,0,255,.22) 0%,rgba(80,0,180,.1) 45%,transparent 70%); animation:bh-breathe 4s ease-in-out infinite alternate; }
+  .bh-accretion { position:absolute; width:390px; height:70px; border-radius:50%; background:conic-gradient(from 0deg,rgba(255,80,0,.78) 0%,rgba(255,180,0,.95) 10%,rgba(255,240,160,1) 20%,rgba(255,180,60,.75) 32%,rgba(200,50,0,.4) 48%,rgba(100,0,220,.45) 62%,rgba(200,80,255,.62) 78%,rgba(255,80,0,.78) 100%); filter:blur(6px); animation:bh-disk 7s linear infinite; }
+  .bh-ring { position:absolute; border-radius:50%; border:2px solid transparent; border-top-color:rgba(200,80,255,.5); border-bottom-color:rgba(80,160,255,.22); }
+  .bh-ring.rev { border-top-color:rgba(255,140,80,.45); border-bottom-color:rgba(150,80,255,.2); }
+  .bh-event { position:absolute; width:162px; height:162px; border-radius:50%; background:radial-gradient(circle,transparent 36%,rgba(140,0,255,.38) 56%,rgba(220,80,255,.55) 72%,transparent 88%); filter:blur(6px); animation:bh-breathe 3s ease-in-out infinite alternate; }
+  .blackhole-core { position:absolute; width:118px; height:118px; border-radius:50%; background:radial-gradient(circle,#000 50%,rgba(30,0,50,.95) 75%,transparent 90%); box-shadow:0 0 55px 22px rgba(120,0,220,.5),0 0 100px 45px rgba(60,0,130,.25),inset 0 0 40px #000; }
+
+  /* ── Aurora / Cyber / Deep Space particles ── */
+  .aurora-band { position:absolute; border-radius:50%; filter:blur(60px); animation:aurora-wave var(--adur,10s) ease-in-out infinite alternate; opacity:0; pointer-events:none; }
+  @keyframes aurora-wave { 0%{opacity:0;transform:scaleX(1) translateY(0)} 40%{opacity:.45} 100%{opacity:.12;transform:scaleX(1.3) translateY(var(--aty,-30px))} }
+  .cyber-scan  { position:absolute; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,rgba(255,220,0,.75),rgba(255,0,200,.55),transparent); filter:blur(1px); animation:cyber-scan-anim var(--csdur,3s) linear infinite; box-shadow:0 0 8px rgba(255,220,0,.5); pointer-events:none; }
+  @keyframes cyber-scan-anim { 0%{top:-2px;opacity:0} 5%{opacity:1} 95%{opacity:.8} 100%{top:100%;opacity:0} }
+  .cyber-spark { position:absolute; border-radius:2px; animation:cyber-spark-anim var(--cpdur,1s) ease-out forwards; pointer-events:none; }
+  @keyframes cyber-spark-anim { 0%{opacity:1;transform:scale(1)} 100%{opacity:0;transform:scale(0) translateY(var(--cpy,-40px))} }
+  .ds-nebula { position:absolute; border-radius:50%; filter:blur(55px); animation:ds-drift var(--dsdur,25s) ease-in-out infinite alternate; pointer-events:none; }
+  @keyframes ds-drift { 0%{opacity:.12;transform:scale(1) rotate(0deg)} 100%{opacity:.24;transform:scale(1.09) rotate(14deg)} }
+  .ds-star { position:absolute; border-radius:50%; animation:ds-twinkle var(--dstdur,4s) ease-in-out infinite; opacity:0; }
+  @keyframes ds-twinkle { 0%,100%{opacity:0;transform:scale(.8)} 50%{opacity:var(--dstop,.8);transform:scale(1.15)} }
+
+  /* ── Admin panel ─────────────────────── */
+  .admin-action-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; padding:18px 12px; border-radius:20px; border:none; cursor:pointer; color:#fff; font-weight:700; font-size:14px; box-shadow:0 6px 24px rgba(0,0,0,0.35); transition:transform .15s,box-shadow .15s; min-height:94px; }
+  .admin-action-btn:active { transform:scale(0.95); box-shadow:0 2px 10px rgba(0,0,0,0.25); }
+  .admin-action-btn .btn-icon { font-size:26px; line-height:1; }
 
   /* ── Ocean ──────────────────────────── */
   .ocean-wave { position:absolute; bottom:0; left:-50%; width:200%; height:90px; background:linear-gradient(to top,rgba(0,150,220,0.28),transparent); border-radius:40% 40% 0 0; animation:wave-move 7s ease-in-out infinite; }
@@ -418,9 +448,14 @@
 
 <canvas id="bg-canvas"></canvas>
 <div id="blackhole-wrap">
-  <div class="blackhole-ring" style="width:350px;height:350px;--s:12s;"></div>
-  <div class="blackhole-ring" style="width:280px;height:280px;--s:8s;transform:rotate(45deg);"></div>
-  <div class="blackhole-ring" style="width:210px;height:210px;--s:5s;"></div>
+  <div class="bh-glow"></div>
+  <div class="bh-accretion"></div>
+  <div class="bh-ring" style="width:460px;height:460px;animation:bh-spin 22s linear infinite;"></div>
+  <div class="bh-ring rev" style="width:395px;height:395px;animation:bh-rspin 15s linear infinite;"></div>
+  <div class="bh-ring" style="width:335px;height:335px;animation:bh-spin 9s linear infinite;transform:rotate(55deg);border-top-color:rgba(255,200,80,.5);"></div>
+  <div class="bh-ring rev" style="width:278px;height:278px;animation:bh-rspin 6s linear infinite;transform:rotate(25deg);"></div>
+  <div class="bh-ring" style="width:226px;height:226px;animation:bh-spin 4s linear infinite;transform:rotate(78deg);border-top-color:rgba(255,255,255,.4);border-width:1.5px;"></div>
+  <div class="bh-event"></div>
   <div class="blackhole-core"></div>
 </div>
 <div class="stars-layer" id="stars-layer"></div>
@@ -557,6 +592,15 @@
         <div class="theme-option" data-theme="sunset" onclick="setTheme('sunset')">
           <div class="theme-icon">🌅</div><div class="theme-name">Закат</div><div class="theme-check" style="display:none;">✓</div>
         </div>
+        <div class="theme-option" data-theme="aurora" onclick="setTheme('aurora')">
+          <div class="theme-icon">🌌</div><div class="theme-name">Аврора</div><div class="theme-check" style="display:none;">✓</div>
+        </div>
+        <div class="theme-option" data-theme="cyber" onclick="setTheme('cyber')">
+          <div class="theme-icon">🤖</div><div class="theme-name">Киберпанк</div><div class="theme-check" style="display:none;">✓</div>
+        </div>
+        <div class="theme-option" data-theme="deepspace" onclick="setTheme('deepspace')">
+          <div class="theme-icon">🔭</div><div class="theme-name">Космос</div><div class="theme-check" style="display:none;">✓</div>
+        </div>
       </div>
     </div>
 
@@ -595,11 +639,68 @@
           <div class="color-dot" data-accent="teal" style="background:radial-gradient(circle at 38% 32%,rgba(255,255,255,0.35),transparent 55%),linear-gradient(145deg,#2dd4bf,#0f766e);"></div>
           <span class="color-label">Голубой</span>
         </div>
+        <div class="color-item" onclick="setAccent('indigo')">
+          <div class="color-dot" data-accent="indigo" style="background:radial-gradient(circle at 38% 32%,rgba(255,255,255,0.35),transparent 55%),linear-gradient(145deg,#818cf8,#4338ca);"></div>
+          <span class="color-label">Индиго</span>
+        </div>
+        <div class="color-item" onclick="setAccent('mint')">
+          <div class="color-dot" data-accent="mint" style="background:radial-gradient(circle at 38% 32%,rgba(255,255,255,0.35),transparent 55%),linear-gradient(145deg,#34d399,#059669);"></div>
+          <span class="color-label">Мятный</span>
+        </div>
+        <div class="color-item" onclick="setAccent('gold')">
+          <div class="color-dot" data-accent="gold" style="background:radial-gradient(circle at 38% 32%,rgba(255,255,255,0.35),transparent 55%),linear-gradient(145deg,#fbbf24,#b45309);"></div>
+          <span class="color-label">Золотой</span>
+        </div>
       </div>
     </div>
 
     <div class="card" style="opacity:.6; font-size:13px; text-align:center; color:var(--text-sub);">
       Настройки сохраняются автоматически
+    </div>
+  </div>
+
+  <!-- ═══ ADMIN ═══ -->
+  <div id="screen-admin" class="screen">
+    <div style="font-size:24px;font-weight:800;">🛡️ Панель администратора</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <button class="admin-action-btn" style="background:linear-gradient(135deg,#ef4444,#f97316);" onclick="adminGetStats()">
+        <span class="btn-icon">📊</span>
+        <span>Статистика</span>
+      </button>
+      <button class="admin-action-btn" style="background:linear-gradient(135deg,#3b82f6,#14b8a6);" onclick="adminShowVpns(1)">
+        <span class="btn-icon">🌐</span>
+        <span>VPN конфиги</span>
+      </button>
+      <button class="admin-action-btn" style="background:linear-gradient(135deg,#a855f7,#ec4899);" onclick="adminParseVpn()">
+        <span class="btn-icon">🔄</span>
+        <span>Парсить VPN</span>
+      </button>
+      <button class="admin-action-btn" style="background:linear-gradient(135deg,#22c55e,#0ea5e9);" onclick="adminShowBalance()">
+        <span class="btn-icon">💰</span>
+        <span>Баланс юзера</span>
+      </button>
+      <button class="admin-action-btn" style="background:linear-gradient(135deg,#000,#14002a,#3d006e,#000);grid-column:1/-1;flex-direction:row;justify-content:flex-start;gap:16px;padding:18px 22px;min-height:78px;" onclick="adminToggleBH()">
+        <span style="font-size:38px;line-height:1;filter:drop-shadow(0 0 8px rgba(180,80,255,0.9));">🕳️</span>
+        <div style="text-align:left;">
+          <div style="font-size:15px;">Интерактивная чёрная дыра</div>
+          <div style="font-size:11px;font-weight:400;opacity:0.65;margin-top:3px;">Только для администратора · белый фон</div>
+        </div>
+      </button>
+    </div>
+
+    <div id="admin-result" class="card" style="display:none;"></div>
+
+    <div id="admin-vpn-wrap" style="display:none;">
+      <div id="admin-vpn-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+      <div id="admin-vpn-pages" style="display:flex;justify-content:center;gap:8px;margin-top:12px;flex-wrap:wrap;"></div>
+    </div>
+
+    <div id="admin-balance-form" class="card" style="display:none;">
+      <div class="settings-label" style="margin-bottom:10px;">Изменить баланс пользователя</div>
+      <input type="number" id="admin-uid-input" placeholder="User ID" style="width:100%;padding:11px 14px;border-radius:12px;border:1px solid var(--card-border);background:var(--glass);color:var(--text);font-size:15px;margin-bottom:8px;outline:none;">
+      <input type="number" id="admin-amount-input" placeholder="Сумма (отрицательная для списания)" style="width:100%;padding:11px 14px;border-radius:12px;border:1px solid var(--card-border);background:var(--glass);color:var(--text);font-size:15px;margin-bottom:12px;outline:none;">
+      <button class="btn" onclick="adminDoBalance()">✅ Применить</button>
     </div>
   </div>
 </div>
@@ -622,6 +723,10 @@
     <span class="nav-icon">⚙️</span>
     <span>Настройки</span>
   </button>
+  <button class="nav-btn" id="nav-admin" onclick="switchTab('admin')" style="display:none;">
+    <span class="nav-icon">🛡️</span>
+    <span>Админ</span>
+  </button>
 </nav>
 
 <!-- Toast -->
@@ -640,6 +745,13 @@
   </div>
 </div>
 
+<!-- Black Hole Overlay (admin only) -->
+<div id="admin-bh-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:#fff;">
+  <canvas id="admin-bh-canvas" style="position:absolute;inset:0;display:block;"></canvas>
+  <button onclick="adminToggleBH()" style="position:absolute;top:16px;right:16px;background:rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.15);border-radius:14px;padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;color:#111;z-index:10000;backdrop-filter:blur(10px);">✕ Закрыть</button>
+  <div style="position:absolute;top:19px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(0,0,0,0.38);z-index:10000;white-space:nowrap;font-weight:600;letter-spacing:.6px;text-transform:uppercase;">🛡️ Эксклюзив для администратора</div>
+</div>
+
 <script>
 // ════════════════════════════════════════════════════
 //  STATE
@@ -650,7 +762,7 @@ if (tg) { tg.ready(); tg.expand(); }
 let state = {
   balance: 0, total_clicks: 0, level: 1,
   is_premium: false, premium_until: null, skin: 'basic',
-  theme: 'dark', accent_color: 'purple',
+  theme: 'dark', accent_color: 'purple', is_admin: false,
 };
 let shopItems = [];
 let levelThresholds = [0,100,250,450,700,1000,1400,1900,2500,3200,4000];
@@ -679,6 +791,18 @@ async function init() {
     try {
       await sendAction({ action:'get_state' });
     } catch(e) { console.warn('offline mode'); }
+
+    // Check admin status
+    try {
+      const cfgResp = await fetch('/api/config');
+      if (cfgResp.ok) {
+        const cfg = await cfgResp.json();
+        if (u && cfg.admin_id && Number(u.id) === Number(cfg.admin_id)) {
+          state.is_admin = true;
+          document.getElementById('nav-admin').style.display = 'flex';
+        }
+      }
+    } catch(e) {}
   }
 
   updateUI();
@@ -1130,6 +1254,7 @@ function applyTheme(theme, accent) {
     starry: initStarry, ocean: initOcean, fire: initFire,
     sakura: initSakura, galaxy: initGalaxy, matrix: initMatrix,
     neon: initNeon, winter: initWinter, sunset: initSunset,
+    aurora: initAurora, cyber: initCyber, deepspace: initDeepSpace,
   };
   if (inits[resolved]) inits[resolved]();
 }
@@ -1329,6 +1454,462 @@ function initSunset() {
     o.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*80}%;top:${Math.random()*80}%;background:radial-gradient(circle,${col},transparent 70%);--odur:${14+Math.random()*14}s;--odx:${dx}px;--ody:${dy}px;animation-delay:${i*-4}s;`;
     layer.appendChild(o);
   });
+}
+
+// ── Aurora ──────────────────────────────────────────
+function initAurora() {
+  const layer = document.getElementById('stars-layer');
+  const cols = ['rgba(0,255,150,0.4)','rgba(0,200,255,0.35)','rgba(120,0,255,0.3)','rgba(0,255,200,0.38)','rgba(160,0,255,0.25)'];
+  cols.forEach((col, i) => {
+    const b = document.createElement('div');
+    b.className = 'aurora-band';
+    const w = 220 + Math.random()*320, h = 80 + Math.random()*140;
+    const aty = -(20 + Math.random()*55);
+    b.style.cssText = `width:${w}px;height:${h}px;left:${Math.random()*80}%;top:${10+Math.random()*55}%;background:radial-gradient(ellipse,${col},transparent 70%);--adur:${8+Math.random()*9}s;--aty:${aty}px;animation-delay:${i*-2.5}s;`;
+    layer.appendChild(b);
+  });
+  for (let i = 0; i < 130; i++) {
+    const s = document.createElement('div');
+    s.className = 'ds-star';
+    const sz = Math.random()*1.8+0.3;
+    s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;background:#fff;--dstdur:${2+Math.random()*4}s;--dstop:${0.4+Math.random()*0.5};animation-delay:${Math.random()*7}s;`;
+    layer.appendChild(s);
+  }
+}
+
+// ── Cyberpunk ────────────────────────────────────────
+function initCyber() {
+  const layer = document.getElementById('stars-layer');
+  const spawnScan = () => {
+    if (!document.body.classList.contains('theme-cyber')) return;
+    const s = document.createElement('div');
+    s.className = 'cyber-scan';
+    const dur = 2.5 + Math.random()*3.5;
+    s.style.cssText = `--csdur:${dur}s;animation-delay:${Math.random()*0.5}s;`;
+    layer.appendChild(s);
+    setTimeout(() => s.remove(), (dur+1)*1000);
+    _themeSpawner = setTimeout(spawnScan, 600 + Math.random()*1400);
+  };
+  const spawnSpark = () => {
+    if (!document.body.classList.contains('theme-cyber')) return;
+    const p = document.createElement('div');
+    p.className = 'cyber-spark';
+    const isY = Math.random() > 0.4;
+    const w = 2+Math.random()*4, h = 8+Math.random()*18;
+    const dur = 0.5+Math.random()*0.8;
+    const cpy = -(25+Math.random()*60);
+    p.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;width:${w}px;height:${h}px;background:${isY?'rgba(255,220,0,0.9)':'rgba(255,0,200,0.85)'};box-shadow:0 0 7px ${isY?'rgba(255,220,0,0.8)':'rgba(255,0,200,0.75)'};--cpdur:${dur}s;--cpy:${cpy}px;`;
+    layer.appendChild(p);
+    setTimeout(() => p.remove(), dur*1000+300);
+    setTimeout(spawnSpark, 80+Math.random()*200);
+  };
+  spawnScan();
+  spawnSpark();
+}
+
+// ── Deep Space ───────────────────────────────────────
+function initDeepSpace() {
+  const layer = document.getElementById('stars-layer');
+  const nebCols = ['rgba(60,0,200,0.22)','rgba(0,60,200,0.18)','rgba(100,0,160,0.2)','rgba(0,100,200,0.16)','rgba(80,0,120,0.2)'];
+  nebCols.forEach((col, i) => {
+    const n = document.createElement('div');
+    n.className = 'ds-nebula';
+    const sz = 200+Math.random()*380;
+    n.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*80}%;top:${Math.random()*80}%;background:radial-gradient(circle,${col},transparent 70%);--dsdur:${20+Math.random()*18}s;animation-delay:${i*-5}s;`;
+    layer.appendChild(n);
+  });
+  const hues = [0,60,120,180,240,300];
+  for (let i = 0; i < 320; i++) {
+    const s = document.createElement('div');
+    s.className = 'ds-star';
+    const sz = Math.random()*1.6+0.25;
+    const col = Math.random() > 0.78 ? `hsl(${hues[Math.floor(Math.random()*hues.length)]},80%,85%)` : '#fff';
+    s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;background:${col};box-shadow:0 0 ${sz}px ${col};--dstdur:${2+Math.random()*6}s;--dstop:${0.4+Math.random()*0.55};animation-delay:${Math.random()*9}s;`;
+    layer.appendChild(s);
+  }
+}
+
+// ════════════════════════════════════════════════════
+//  ADMIN PANEL
+// ════════════════════════════════════════════════════
+let adminVpnPage = 1;
+
+function adminHeaders() {
+  return { 'X-Init-Data': tg?.initData || '' };
+}
+function hideAdminSubs() {
+  document.getElementById('admin-result').style.display = 'none';
+  document.getElementById('admin-vpn-wrap').style.display = 'none';
+  document.getElementById('admin-balance-form').style.display = 'none';
+}
+
+async function adminGetStats() {
+  hideAdminSubs();
+  const el = document.getElementById('admin-result');
+  el.style.display = 'block';
+  el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-sub);">⏳ Загрузка…</div>';
+  try {
+    const r = await fetch('/api/admin/stats', { method:'POST', headers: adminHeaders() });
+    const d = await r.json();
+    if (!d.ok) { el.innerHTML = `<div style="color:#ef4444;padding:12px;">❌ ${escHtml(d.error)}</div>`; return; }
+    el.innerHTML = `
+      <div style="font-size:16px;font-weight:800;margin-bottom:12px;">📊 Статистика</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+        <div class="stat-box"><div class="stat-val">${d.users}</div><div class="stat-lbl">Пользователей</div></div>
+        <div class="stat-box"><div class="stat-val">${fmt(d.total_clicks)}</div><div class="stat-lbl">Всего кликов</div></div>
+        <div class="stat-box"><div class="stat-val">${d.premium}</div><div class="stat-lbl">Premium</div></div>
+        <div class="stat-box"><div class="stat-val">${d.vpn_free}/${d.vpn_total}</div><div class="stat-lbl">VPN свободно</div></div>
+      </div>
+      ${d.top10?.length ? `<div style="font-size:13px;font-weight:800;margin-bottom:6px;">🏆 Топ игроки</div>
+      ${d.top10.map((u,i)=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--card-border);font-size:13px;"><span style="color:var(--text-sub);">${i+1}. ${escHtml(u.name)}</span><span style="color:var(--accent);font-weight:700;">${fmt(u.clicks)}</span></div>`).join('')}` : ''}
+    `;
+  } catch(e) { el.innerHTML = '<div style="color:#ef4444;padding:12px;">❌ Ошибка соединения</div>'; }
+}
+
+async function adminShowVpns(page) {
+  hideAdminSubs();
+  adminVpnPage = page;
+  const wrap = document.getElementById('admin-vpn-wrap');
+  const list = document.getElementById('admin-vpn-list');
+  const pages = document.getElementById('admin-vpn-pages');
+  wrap.style.display = 'block';
+  list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-sub);">⏳ Загрузка…</div>';
+  pages.innerHTML = '';
+  try {
+    const r = await fetch(`/api/admin/vpns?page=${page}`, { headers: adminHeaders() });
+    const d = await r.json();
+    if (!d.ok) { list.innerHTML = `<div style="color:#ef4444;padding:12px;">❌ ${escHtml(d.error)}</div>`; return; }
+    const totalPages = Math.ceil(d.total / 20);
+    if (!d.configs.length) {
+      list.innerHTML = '<div style="text-align:center;color:var(--text-sub);padding:20px;">Нет конфигов. Нажмите «Парсить VPN».</div>';
+    } else {
+      list.innerHTML = d.configs.map((cfg, i) => `
+        <div class="card" style="padding:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span style="font-size:12px;font-weight:700;color:var(--accent);">#${cfg.id} ${cfg.is_sold ? '🔴 Продан' : '🟢 Свободен'}</span>
+            <button onclick="adminCopyVpn('avcfg${i}')" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:4px 10px;font-size:11px;cursor:pointer;font-weight:600;">📋</button>
+          </div>
+          <pre id="avcfg${i}" style="font-size:10.5px;color:var(--text);white-space:pre-wrap;word-break:break-all;background:rgba(0,0,0,0.25);padding:8px;border-radius:8px;margin:0;max-height:110px;overflow-y:auto;">${escHtml(cfg.config_text)}</pre>
+        </div>
+      `).join('');
+    }
+    let pHtml = '';
+    for (let p = 1; p <= totalPages; p++) {
+      pHtml += `<button onclick="adminShowVpns(${p})" style="padding:7px 14px;border-radius:10px;border:1px solid ${p===adminVpnPage?'var(--accent)':'var(--card-border)'};background:${p===adminVpnPage?'var(--accent)':'var(--card)'};color:${p===adminVpnPage?'#fff':'var(--text)'};cursor:pointer;font-weight:700;font-size:13px;">${p}</button>`;
+    }
+    pages.innerHTML = pHtml;
+  } catch(e) { list.innerHTML = '<div style="color:#ef4444;padding:12px;">❌ Ошибка соединения</div>'; }
+}
+
+function adminCopyVpn(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  navigator.clipboard?.writeText(el.textContent.trim()).then(() => showToast('📋 Скопировано!', 'success'));
+}
+
+async function adminParseVpn() {
+  hideAdminSubs();
+  const el = document.getElementById('admin-result');
+  el.style.display = 'block';
+  el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-sub);">⏳ Парсинг VPN конфигов…</div>';
+  try {
+    const r = await fetch('/api/admin/parse_vpn', { method:'POST', headers: adminHeaders() });
+    const d = await r.json();
+    el.innerHTML = `<div style="text-align:center;padding:16px;">
+      <div style="font-size:38px;margin-bottom:8px;">${d.ok ? '✅' : '❌'}</div>
+      <div style="font-weight:800;font-size:16px;">${d.ok ? 'Парсинг завершён!' : 'Ошибка: '+escHtml(d.error||'')}</div>
+      ${d.ok ? `<div style="color:var(--text-sub);margin-top:8px;font-size:13px;">Найдено: <b>${d.total}</b> &nbsp;•&nbsp; Добавлено: <b style="color:var(--accent);">${d.added}</b></div>` : ''}
+    </div>`;
+  } catch(e) { el.innerHTML = '<div style="color:#ef4444;padding:12px;">❌ Ошибка соединения</div>'; }
+}
+
+function adminShowBalance() {
+  hideAdminSubs();
+  document.getElementById('admin-balance-form').style.display = 'block';
+}
+
+async function adminDoBalance() {
+  const uid = parseInt(document.getElementById('admin-uid-input').value);
+  const amount = parseInt(document.getElementById('admin-amount-input').value);
+  if (!uid || isNaN(amount)) return showToast('Введите User ID и сумму', 'error');
+  try {
+    const r = await fetch('/api/admin/balance', {
+      method: 'POST',
+      headers: { ...adminHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: uid, amount }),
+    });
+    const d = await r.json();
+    if (d.ok) showToast(`✅ Баланс: ${fmt(d.new_balance)} кликов`, 'success');
+    else showToast(`❌ ${d.error}`, 'error');
+  } catch(e) { showToast('❌ Ошибка соединения', 'error'); }
+}
+
+function escHtml(t) { return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ════════════════════════════════════════════════════
+//  ADMIN BLACK HOLE VISUALISER
+// ════════════════════════════════════════════════════
+let _bhCancel = null;
+
+function adminToggleBH() {
+  const overlay = document.getElementById('admin-bh-overlay');
+  if (overlay.style.display !== 'none') {
+    overlay.style.display = 'none';
+    if (_bhCancel) { _bhCancel(); _bhCancel = null; }
+  } else {
+    overlay.style.display = 'block';
+    _bhCancel = startAdminBH();
+  }
+}
+
+function startAdminBH() {
+  const canvas = document.getElementById('admin-bh-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, cx, cy, frame = 0, animId, BR;
+
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    W = canvas.width  = window.innerWidth  * dpr;
+    H = canvas.height = window.innerHeight * dpr;
+    canvas.style.width  = window.innerWidth  + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    cx = W / 2; cy = H / 2;
+    BR = Math.min(W, H) * 0.17;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Background stars for gravitational lensing effect
+  const bgStars = Array.from({length: 280}, () => ({
+    a:  Math.random() * Math.PI * 2,
+    d:  0, // set below
+    sz: 0.5 + Math.random() * 1.8,
+    br: 0.12 + Math.random() * 0.5,
+    col: `hsl(${Math.random()*60+200},${30+Math.random()*40}%,${75+Math.random()*20}%)`,
+  }));
+  bgStars.forEach(s => { s.d = BR * 2.6 + Math.random() * BR * 7; });
+
+  // Accretion disk particles — denser near inner edge
+  const diskPts = Array.from({length: 1600}, () => {
+    const rFrac = Math.pow(Math.random(), 0.55);
+    const r = BR * 1.14 + rFrac * BR * 1.65;
+    return {
+      a:    Math.random() * Math.PI * 2,
+      r, rFrac,
+      spd:  (0.65 + Math.random() * 0.7) * 0.52 / Math.sqrt(r / BR),
+      sz:   0.45 + Math.random() * (rFrac < 0.22 ? 3.2 : 1.9),
+      ph:   Math.random() * Math.PI * 2,
+      op:   0.35 + Math.random() * 0.65,
+    };
+  });
+
+  // Polar relativistic jets
+  const jetPts = Array.from({length: 110}, (_, i) => ({
+    dist: BR * 0.3 + Math.random() * BR * 7.5,
+    jit:  (Math.random() - 0.5) * BR * 0.14,
+    dir:  i < 55 ? -1 : 1,
+    spd:  0.55 + Math.random() * 2.2,
+    sz:   0.4 + Math.random() * 2.2,
+    op:   0.3 + Math.random() * 0.7,
+  }));
+
+  function diskColor(angle, rFrac) {
+    const d = Math.cos(angle);
+    const heat = 1 - rFrac * 0.62;
+    let r, g, b;
+    if (d > 0.4) {
+      const t = Math.min(1, (d - 0.4) / 0.6);
+      r = Math.round(70  + heat * 130 + t * 25);
+      g = Math.round(110 + heat * 110 + t * 55);
+      b = 255;
+    } else if (d < -0.4) {
+      const t = Math.min(1, (-d - 0.4) / 0.6);
+      r = 255;
+      g = Math.round(45 + heat * 115 - t * 45);
+      b = Math.round(heat * 18);
+    } else {
+      r = Math.round(215 + heat * 40);
+      g = Math.round(140 + heat * 95);
+      b = Math.round(heat * 85);
+    }
+    return `rgb(${Math.min(255,Math.max(0,r))},${Math.min(255,Math.max(0,g))},${Math.min(255,Math.max(0,b))})`;
+  }
+
+  function render() {
+    frame++;
+
+    // White background
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, W, H);
+
+    // ── Background stars (gravitational lensing) ──
+    for (const s of bgStars) {
+      const x = cx + Math.cos(s.a) * s.d;
+      const y = cy + Math.sin(s.a) * s.d * 0.4;
+      const dd = Math.hypot(x - cx, (y - cy) / 0.4);
+      if (dd < BR * 1.3) continue;
+      const fade = Math.min(1, (dd - BR * 1.3) / (BR * 0.7));
+      ctx.save();
+      ctx.globalAlpha = s.br * fade;
+      ctx.fillStyle = s.col;
+      ctx.shadowColor = s.col;
+      ctx.shadowBlur = s.sz * 1.5;
+      ctx.beginPath();
+      ctx.arc(x, y, s.sz, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // ── Outer corona glow ──
+    const gl = ctx.createRadialGradient(cx, cy, BR * 0.65, cx, cy, BR * 4.2);
+    gl.addColorStop(0,    'rgba(150,55,230,0.14)');
+    gl.addColorStop(0.3,  'rgba(90,15,190,0.08)');
+    gl.addColorStop(0.65, 'rgba(30,0,90,0.03)');
+    gl.addColorStop(1,    'rgba(0,0,0,0)');
+    ctx.fillStyle = gl;
+    ctx.beginPath();
+    ctx.arc(cx, cy, BR * 4.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // ── Disk BACK half (behind event horizon) ──
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(1, 0.34);
+    for (const p of diskPts) {
+      p.a += p.spd * 0.0065;
+      if (Math.sin(p.a) >= 0) continue;
+      const x = Math.cos(p.a) * p.r;
+      const y = Math.sin(p.a) * p.r;
+      const heat = Math.max(0, 1 - p.rFrac * 0.75);
+      const flicker = 0.65 + 0.35 * Math.sin(p.ph + frame * 0.017);
+      const alpha = Math.max(0, p.op * (0.18 + heat * 0.52) * flicker * 0.62);
+      const col = diskColor(p.a, p.rFrac);
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.shadowColor = col;
+      ctx.shadowBlur = p.sz * 4;
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.arc(x, y, p.sz, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    ctx.restore();
+
+    // ── Photon ring BACK ──
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(1, 0.34);
+    for (let a = Math.PI + 0.04; a < Math.PI * 2 - 0.04; a += 0.038) {
+      const pr = BR * 1.09;
+      const bri = 0.28 + 0.72 * Math.abs(Math.cos(a));
+      ctx.save();
+      ctx.globalAlpha = bri * 0.42;
+      ctx.shadowColor  = 'rgba(255,215,110,.95)';
+      ctx.shadowBlur   = 12;
+      ctx.fillStyle    = 'rgba(255,235,155,1)';
+      ctx.beginPath();
+      ctx.arc(Math.cos(a) * pr, Math.sin(a) * pr, 2.3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    ctx.restore();
+
+    // ── Event horizon shadow ──
+    const sh = ctx.createRadialGradient(cx, cy, BR * 0.55, cx, cy, BR * 1.1);
+    sh.addColorStop(0,    'rgba(0,0,0,1)');
+    sh.addColorStop(0.7,  'rgba(0,0,0,1)');
+    sh.addColorStop(0.88, 'rgba(12,2,30,0.9)');
+    sh.addColorStop(1,    'rgba(0,0,0,0)');
+    ctx.fillStyle = sh;
+    ctx.beginPath();
+    ctx.arc(cx, cy, BR * 1.1, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(cx, cy, BR * 0.57, 0, Math.PI * 2);
+    ctx.fill();
+
+    // ── Disk FRONT half (in front of event horizon) ──
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(1, 0.34);
+    for (const p of diskPts) {
+      if (Math.sin(p.a) < 0) continue;
+      const x = Math.cos(p.a) * p.r;
+      const y = Math.sin(p.a) * p.r;
+      const heat = Math.max(0, 1 - p.rFrac * 0.75);
+      const flicker = 0.65 + 0.35 * Math.sin(p.ph + frame * 0.017);
+      const alpha = Math.max(0, p.op * (0.24 + heat * 0.65) * flicker);
+      const col = diskColor(p.a, p.rFrac);
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.shadowColor = col;
+      ctx.shadowBlur = p.sz * 5.5;
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.arc(x, y, p.sz, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    ctx.restore();
+
+    // ── Photon ring FRONT ──
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(1, 0.34);
+    for (let a = 0.04; a < Math.PI - 0.04; a += 0.028) {
+      const pr = BR * 1.09;
+      const bri = 0.42 + 0.58 * Math.abs(Math.cos(a));
+      ctx.save();
+      ctx.globalAlpha = bri * 0.72;
+      ctx.shadowColor  = 'rgba(255,215,100,.98)';
+      ctx.shadowBlur   = 18;
+      ctx.fillStyle    = 'rgba(255,242,180,1)';
+      ctx.beginPath();
+      ctx.arc(Math.cos(a) * pr, Math.sin(a) * pr, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    ctx.restore();
+
+    // ── Polar jets ──
+    for (const j of jetPts) {
+      j.dist += j.spd * 0.5;
+      if (j.dist > BR * 8) j.dist = BR * 0.3 + Math.random() * BR * 0.8;
+      const x = cx + j.jit;
+      const y = cy + j.dir * j.dist;
+      const fin  = Math.min(1, j.dist / (BR * 1.1));
+      const fout = Math.max(0, 1 - j.dist / (BR * 8));
+      ctx.save();
+      ctx.globalAlpha = j.op * fin * fout * 0.42;
+      ctx.shadowColor  = 'rgba(70,155,255,.95)';
+      ctx.shadowBlur   = 15;
+      ctx.fillStyle    = 'rgba(90,175,255,1)';
+      ctx.beginPath();
+      ctx.arc(x, y, j.sz, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // ── Einstein ring hint ──
+    ctx.save();
+    ctx.strokeStyle = 'rgba(130,70,255,0.06)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, BR * 2.65, BR * 2.65 * 0.34, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+
+    animId = requestAnimationFrame(render);
+  }
+
+  render();
+
+  return function cancel() {
+    cancelAnimationFrame(animId);
+    window.removeEventListener('resize', resize);
+  };
 }
 
 // ════════════════════════════════════════════════════
